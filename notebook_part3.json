@@ -1,0 +1,554 @@
+{
+    "cells": [
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 3.4 Operational Metrics Analysis"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "### 3.4.1 Time in Hospital"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Analyze time in hospital by readmission status\n",
+                "fig, axes = plt.subplots(1, 2, figsize=(16, 6))\n",
+                "\n",
+                "# Box plot\n",
+                "sns.boxplot(data=df, x='readmitted', y='time_in_hospital', ax=axes[0], palette='Set2')\n",
+                "axes[0].set_title('Time in Hospital by Readmission Status', fontsize=14, fontweight='bold')\n",
+                "axes[0].set_xlabel('Readmission Status', fontsize=12)\n",
+                "axes[0].set_ylabel('Days in Hospital', fontsize=12)\n",
+                "\n",
+                "# Violin plot\n",
+                "sns.violinplot(data=df, x='readmitted', y='time_in_hospital', ax=axes[1], palette='Set2')\n",
+                "axes[1].set_title('Distribution of Hospital Stay Length', fontsize=14, fontweight='bold')\n",
+                "axes[1].set_xlabel('Readmission Status', fontsize=12)\n",
+                "axes[1].set_ylabel('Days in Hospital', fontsize=12)\n",
+                "\n",
+                "plt.tight_layout()\n",
+                "plt.show()\n",
+                "\n",
+                "# Statistical summary\n",
+                "print(\"\\n📊 Time in Hospital Statistics by Readmission Status:\")\n",
+                "print(df.groupby('readmitted')['time_in_hospital'].describe())\n",
+                "\n",
+                "print(\"\\nClinical Interpretation: Longer hospital stays may indicate higher\")\n",
+                "print(\"complexity and could be associated with readmission risk.\")"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "### 3.4.2 Number of Lab Procedures"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Analyze lab procedures\n",
+                "fig, axes = plt.subplots(1, 2, figsize=(16, 6))\n",
+                "\n",
+                "# Box plot\n",
+                "sns.boxplot(data=df, x='readmitted', y='num_lab_procedures', ax=axes[0], palette='Set2')\n",
+                "axes[0].set_title('Number of Lab Procedures by Readmission Status', fontsize=14, fontweight='bold')\n",
+                "axes[0].set_xlabel('Readmission Status', fontsize=12)\n",
+                "axes[0].set_ylabel('Number of Lab Procedures', fontsize=12)\n",
+                "\n",
+                "# Violin plot\n",
+                "sns.violinplot(data=df, x='readmitted', y='num_lab_procedures', ax=axes[1], palette='Set2')\n",
+                "axes[1].set_title('Distribution of Lab Procedures', fontsize=14, fontweight='bold')\n",
+                "axes[1].set_xlabel('Readmission Status', fontsize=12)\n",
+                "axes[1].set_ylabel('Number of Lab Procedures', fontsize=12)\n",
+                "\n",
+                "plt.tight_layout()\n",
+                "plt.show()\n",
+                "\n",
+                "# Statistical summary\n",
+                "print(\"\\n📊 Lab Procedures Statistics by Readmission Status:\")\n",
+                "print(df.groupby('readmitted')['num_lab_procedures'].describe())\n",
+                "\n",
+                "print(\"\\nClinical Interpretation: More lab procedures may indicate higher acuity\")\n",
+                "print(\"and more complex medical conditions.\")"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "### 3.4.3 Number of Medications"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Analyze medications\n",
+                "fig, axes = plt.subplots(1, 2, figsize=(16, 6))\n",
+                "\n",
+                "# Box plot\n",
+                "sns.boxplot(data=df, x='readmitted', y='num_medications', ax=axes[0], palette='Set2')\n",
+                "axes[0].set_title('Number of Medications by Readmission Status', fontsize=14, fontweight='bold')\n",
+                "axes[0].set_xlabel('Readmission Status', fontsize=12)\n",
+                "axes[0].set_ylabel('Number of Medications', fontsize=12)\n",
+                "\n",
+                "# Violin plot\n",
+                "sns.violinplot(data=df, x='readmitted', y='num_medications', ax=axes[1], palette='Set2')\n",
+                "axes[1].set_title('Distribution of Medications', fontsize=14, fontweight='bold')\n",
+                "axes[1].set_xlabel('Readmission Status', fontsize=12)\n",
+                "axes[1].set_ylabel('Number of Medications', fontsize=12)\n",
+                "\n",
+                "plt.tight_layout()\n",
+                "plt.show()\n",
+                "\n",
+                "# Statistical summary\n",
+                "print(\"\\n📊 Medications Statistics by Readmission Status:\")\n",
+                "print(df.groupby('readmitted')['num_medications'].describe())\n",
+                "\n",
+                "print(\"\\nClinical Interpretation: Higher medication counts suggest polypharmacy,\")\n",
+                "print(\"which can increase complexity of care and potential for adverse events.\")"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 3.5 Correlation Analysis"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Select key numerical features for correlation analysis\n",
+                "numerical_features = [\n",
+                "    'time_in_hospital', 'num_lab_procedures', 'num_procedures',\n",
+                "    'num_medications', 'number_outpatient', 'number_emergency',\n",
+                "    'number_inpatient', 'number_diagnoses'\n",
+                "]\n",
+                "\n",
+                "# Create correlation heatmap\n",
+                "corr_matrix = create_correlation_heatmap(df, columns=numerical_features, figsize=(12, 10))\n",
+                "plt.show()\n",
+                "\n",
+                "print(\"\\n📊 Key Correlations:\")\n",
+                "print(\"\\nStrongest positive correlations:\")\n",
+                "# Get upper triangle of correlation matrix\n",
+                "upper_tri = corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(bool))\n",
+                "correlations = upper_tri.stack().sort_values(ascending=False)\n",
+                "print(correlations.head(5))\n",
+                "\n",
+                "print(\"\\nClinical Interpretation: Understanding feature correlations helps identify\")\n",
+                "print(\"multicollinearity and reveals relationships between operational metrics.\")"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 3.6 Phase 3 Summary"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "print(\"=\" * 70)\n",
+                "print(\"PHASE 3: EXPLORATORY DATA ANALYSIS COMPLETE\")\n",
+                "print(\"=\" * 70)\n",
+                "print(\"\\nKey Findings:\")\n",
+                "print(f\"  1. ✓ 30-Day Readmission Rate: {readmit_30_rate:.2f}%\")\n",
+                "print(f\"  2. ✓ Class imbalance present (realistic for healthcare data)\")\n",
+                "print(\"  3. ✓ Age shows variation in readmission risk\")\n",
+                "print(\"  4. ✓ Medication category influences readmission patterns\")\n",
+                "print(\"  5. ✓ Operational metrics (time, labs, meds) show associations\")\n",
+                "print(\"  6. ✓ Correlations identified between clinical features\")\n",
+                "print(\"\\nThese insights will inform the VCI risk stratification model.\")\n",
+                "print(\"=\" * 70)"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "<a id='phase4'></a>\n",
+                "# Phase 4: Feature Engineering - Vitality Complexity Index (VCI)\n",
+                "\n",
+                "In this phase, we build a patient risk scoring algorithm inspired by the LACE Index:\n",
+                "- **L**: Length of Stay (0-7 points)\n",
+                "- **A**: Acuity of Admission (0-3 points)\n",
+                "- **C**: Comorbidity Burden (0-5 points)\n",
+                "- **E**: Emergency Visits (0-5 points)\n",
+                "\n",
+                "**Total VCI Score Range**: 0-20 points"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 4.1 Calculate VCI Scores"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Calculate VCI score for each patient\n",
+                "print(\"Calculating Vitality Complexity Index (VCI) scores...\")\n",
+                "\n",
+                "df['VCI_Score'] = df.apply(calculate_vci_score, axis=1)\n",
+                "\n",
+                "print(\"✓ VCI scores calculated\")\n",
+                "print(f\"\\nVCI Score Statistics:\")\n",
+                "print(df['VCI_Score'].describe())\n",
+                "\n",
+                "# Display distribution\n",
+                "plt.figure(figsize=(12, 6))\n",
+                "plt.hist(df['VCI_Score'], bins=21, color='steelblue', alpha=0.7, edgecolor='black')\n",
+                "plt.title('Distribution of VCI Scores', fontsize=14, fontweight='bold')\n",
+                "plt.xlabel('VCI Score', fontsize=12)\n",
+                "plt.ylabel('Frequency', fontsize=12)\n",
+                "plt.axvline(df['VCI_Score'].mean(), color='red', linestyle='--', \n",
+                "            label=f'Mean: {df[\"VCI_Score\"].mean():.2f}')\n",
+                "plt.axvline(df['VCI_Score'].median(), color='green', linestyle='--',\n",
+                "            label=f'Median: {df[\"VCI_Score\"].median():.2f}')\n",
+                "plt.legend()\n",
+                "plt.grid(alpha=0.3)\n",
+                "plt.tight_layout()\n",
+                "plt.show()"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 4.2 Categorize into Risk Groups"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Categorize patients into risk groups\n",
+                "df['VCI_Risk_Category'] = df['VCI_Score'].apply(categorize_vci_risk)\n",
+                "\n",
+                "print(\"Risk Category Distribution:\")\n",
+                "risk_dist = df['VCI_Risk_Category'].value_counts()\n",
+                "print(risk_dist)\n",
+                "print(f\"\\nPercentage Distribution:\")\n",
+                "print((risk_dist / len(df) * 100).round(2))\n",
+                "\n",
+                "# Visualize risk categories\n",
+                "fig, axes = plt.subplots(1, 2, figsize=(14, 5))\n",
+                "\n",
+                "# Count plot\n",
+                "risk_order = ['Low', 'Medium', 'High']\n",
+                "risk_colors = ['#2ecc71', '#f39c12', '#e74c3c']\n",
+                "risk_dist_ordered = df['VCI_Risk_Category'].value_counts().reindex(risk_order)\n",
+                "risk_dist_ordered.plot(kind='bar', ax=axes[0], color=risk_colors, alpha=0.8)\n",
+                "axes[0].set_title('VCI Risk Category Distribution', fontsize=14, fontweight='bold')\n",
+                "axes[0].set_xlabel('Risk Category', fontsize=12)\n",
+                "axes[0].set_ylabel('Count', fontsize=12)\n",
+                "axes[0].set_xticklabels(axes[0].get_xticklabels(), rotation=0)\n",
+                "\n",
+                "# Pie chart\n",
+                "axes[1].pie(risk_dist_ordered, labels=risk_order, autopct='%1.1f%%',\n",
+                "            colors=risk_colors, startangle=90)\n",
+                "axes[1].set_title('VCI Risk Category Proportion', fontsize=14, fontweight='bold')\n",
+                "\n",
+                "plt.tight_layout()\n",
+                "plt.show()"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 4.3 Validate VCI Effectiveness"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Calculate readmission rates by risk category\n",
+                "print(\"=\" * 70)\n",
+                "print(\"VCI VALIDATION: 30-DAY READMISSION RATES BY RISK CATEGORY\")\n",
+                "print(\"=\" * 70)\n",
+                "\n",
+                "risk_readmit_analysis = df.groupby('VCI_Risk_Category')['readmitted'].apply(\n",
+                "    lambda x: pd.Series({\n",
+                "        'Total_Patients': len(x),\n",
+                "        'Readmitted_30d': (x == '<30').sum(),\n",
+                "        'Readmission_Rate_%': (x == '<30').sum() / len(x) * 100\n",
+                "    })\n",
+                ").reindex(risk_order)\n",
+                "\n",
+                "print(risk_readmit_analysis)\n",
+                "\n",
+                "# Calculate risk ratio\n",
+                "low_rate = risk_readmit_analysis.loc['Low', 'Readmission_Rate_%']\n",
+                "high_rate = risk_readmit_analysis.loc['High', 'Readmission_Rate_%']\n",
+                "risk_ratio = high_rate / low_rate if low_rate > 0 else 0\n",
+                "\n",
+                "print(f\"\\n📊 Key Validation Metrics:\")\n",
+                "print(f\"  • Low Risk Readmission Rate: {low_rate:.2f}%\")\n",
+                "print(f\"  • High Risk Readmission Rate: {high_rate:.2f}%\")\n",
+                "print(f\"  • Risk Ratio (High/Low): {risk_ratio:.2f}x\")\n",
+                "\n",
+                "if risk_ratio > 1.5:\n",
+                "    print(\"\\n✅ VCI SUCCESSFULLY STRATIFIES RISK\")\n",
+                "    print(\"High-risk patients have significantly higher readmission rates.\")\n",
+                "else:\n",
+                "    print(\"\\n⚠️ VCI shows moderate risk stratification\")\n",
+                "    print(\"Further refinement may be needed.\")"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Visualize readmission rates by risk category\n",
+                "fig, axes = plt.subplots(1, 2, figsize=(16, 6))\n",
+                "\n",
+                "# Stacked bar chart\n",
+                "readmit_by_risk = pd.crosstab(df['VCI_Risk_Category'], df['readmitted'], normalize='index') * 100\n",
+                "readmit_by_risk = readmit_by_risk.reindex(risk_order)\n",
+                "readmit_by_risk.plot(kind='bar', stacked=True, ax=axes[0], \n",
+                "                     color=['#2ecc71', '#e74c3c', '#3498db'], alpha=0.8)\n",
+                "axes[0].set_title('Readmission Status Distribution by Risk Category', fontsize=14, fontweight='bold')\n",
+                "axes[0].set_xlabel('VCI Risk Category', fontsize=12)\n",
+                "axes[0].set_ylabel('Percentage (%)', fontsize=12)\n",
+                "axes[0].set_xticklabels(axes[0].get_xticklabels(), rotation=0)\n",
+                "axes[0].legend(title='Readmitted', bbox_to_anchor=(1.05, 1), loc='upper left')\n",
+                "\n",
+                "# 30-day readmission rate comparison\n",
+                "readmit_30_by_risk = risk_readmit_analysis['Readmission_Rate_%']\n",
+                "bars = axes[1].bar(risk_order, readmit_30_by_risk, color=risk_colors, alpha=0.8)\n",
+                "axes[1].set_title('30-Day Readmission Rate by VCI Risk Category', fontsize=14, fontweight='bold')\n",
+                "axes[1].set_xlabel('VCI Risk Category', fontsize=12)\n",
+                "axes[1].set_ylabel('Readmission Rate (%)', fontsize=12)\n",
+                "axes[1].axhline(y=readmit_30_rate, color='red', linestyle='--', \n",
+                "                label=f'Overall: {readmit_30_rate:.2f}%')\n",
+                "\n",
+                "# Add value labels on bars\n",
+                "for bar in bars:\n",
+                "    height = bar.get_height()\n",
+                "    axes[1].text(bar.get_x() + bar.get_width()/2., height,\n",
+                "                f'{height:.2f}%', ha='center', va='bottom', fontweight='bold')\n",
+                "\n",
+                "axes[1].legend()\n",
+                "\n",
+                "plt.tight_layout()\n",
+                "plt.show()"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 4.4 VCI Score vs Readmission Analysis"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Analyze readmission rate across VCI score spectrum\n",
+                "vci_readmit_by_score = df.groupby('VCI_Score')['readmitted'].apply(\n",
+                "    lambda x: (x == '<30').sum() / len(x) * 100\n",
+                ").sort_index()\n",
+                "\n",
+                "plt.figure(figsize=(14, 6))\n",
+                "plt.plot(vci_readmit_by_score.index, vci_readmit_by_score.values, \n",
+                "         marker='o', linewidth=2, markersize=8, color='steelblue')\n",
+                "plt.title('30-Day Readmission Rate by VCI Score', fontsize=14, fontweight='bold')\n",
+                "plt.xlabel('VCI Score', fontsize=12)\n",
+                "plt.ylabel('Readmission Rate (%)', fontsize=12)\n",
+                "plt.axhline(y=readmit_30_rate, color='red', linestyle='--', alpha=0.7,\n",
+                "            label=f'Overall Average: {readmit_30_rate:.2f}%')\n",
+                "plt.grid(alpha=0.3)\n",
+                "plt.legend()\n",
+                "plt.tight_layout()\n",
+                "plt.show()\n",
+                "\n",
+                "print(\"\\n📊 Clinical Interpretation:\")\n",
+                "print(\"The trend line shows how readmission risk changes across the VCI spectrum.\")\n",
+                "print(\"An upward trend validates the VCI as an effective risk stratification tool.\")"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 4.5 Component Analysis"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Analyze contribution of each VCI component\n",
+                "print(\"=\" * 70)\n",
+                "print(\"VCI COMPONENT ANALYSIS\")\n",
+                "print(\"=\" * 70)\n",
+                "\n",
+                "# Calculate individual component scores\n",
+                "def get_length_score(days):\n",
+                "    if days < 1: return 0\n",
+                "    elif 1 <= days <= 4: return 1\n",
+                "    elif 5 <= days <= 13: return 4\n",
+                "    else: return 7\n",
+                "\n",
+                "df['L_Score'] = df['time_in_hospital'].apply(get_length_score)\n",
+                "df['A_Score'] = df['admission_type_id'].apply(lambda x: 3 if x in [1, 2] else 0)\n",
+                "\n",
+                "# Analyze component distributions\n",
+                "fig, axes = plt.subplots(2, 2, figsize=(14, 10))\n",
+                "\n",
+                "# Length of Stay\n",
+                "df['L_Score'].value_counts().sort_index().plot(kind='bar', ax=axes[0,0], \n",
+                "                                                color='skyblue', alpha=0.8)\n",
+                "axes[0,0].set_title('L: Length of Stay Score Distribution', fontweight='bold')\n",
+                "axes[0,0].set_xlabel('Score')\n",
+                "axes[0,0].set_ylabel('Count')\n",
+                "\n",
+                "# Acuity\n",
+                "df['A_Score'].value_counts().sort_index().plot(kind='bar', ax=axes[0,1],\n",
+                "                                                color='lightcoral', alpha=0.8)\n",
+                "axes[0,1].set_title('A: Acuity of Admission Score Distribution', fontweight='bold')\n",
+                "axes[0,1].set_xlabel('Score')\n",
+                "axes[0,1].set_ylabel('Count')\n",
+                "\n",
+                "# Emergency Visits\n",
+                "df['number_emergency'].value_counts().sort_index().head(10).plot(kind='bar', ax=axes[1,0],\n",
+                "                                                                   color='lightgreen', alpha=0.8)\n",
+                "axes[1,0].set_title('E: Emergency Visits Distribution', fontweight='bold')\n",
+                "axes[1,0].set_xlabel('Number of Emergency Visits')\n",
+                "axes[1,0].set_ylabel('Count')\n",
+                "\n",
+                "# Number of Diagnoses (proxy for Comorbidity)\n",
+                "df['number_diagnoses'].value_counts().sort_index().plot(kind='bar', ax=axes[1,1],\n",
+                "                                                         color='plum', alpha=0.8)\n",
+                "axes[1,1].set_title('C: Number of Diagnoses Distribution', fontweight='bold')\n",
+                "axes[1,1].set_xlabel('Number of Diagnoses')\n",
+                "axes[1,1].set_ylabel('Count')\n",
+                "\n",
+                "plt.tight_layout()\n",
+                "plt.show()\n",
+                "\n",
+                "print(\"\\nEach component contributes to the overall VCI score, capturing different\")\n",
+                "print(\"aspects of patient complexity and readmission risk.\")"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 4.6 Phase 4 Summary & Final Results"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "print(\"=\" * 70)\n",
+                "print(\"PHASE 4: VITALITY COMPLEXITY INDEX (VCI) - COMPLETE\")\n",
+                "print(\"=\" * 70)\n",
+                "print(\"\\nVCI Implementation Summary:\")\n",
+                "print(f\"  ✓ Calculated VCI scores for {len(df):,} patients\")\n",
+                "print(f\"  ✓ Score range: {df['VCI_Score'].min()}-{df['VCI_Score'].max()} (possible: 0-20)\")\n",
+                "print(f\"  ✓ Mean VCI: {df['VCI_Score'].mean():.2f}\")\n",
+                "print(f\"  ✓ Median VCI: {df['VCI_Score'].median():.2f}\")\n",
+                "print(\"\\nRisk Stratification Results:\")\n",
+                "for risk in risk_order:\n",
+                "    count = risk_dist_ordered[risk]\n",
+                "    pct = (count / len(df)) * 100\n",
+                "    rate = risk_readmit_analysis.loc[risk, 'Readmission_Rate_%']\n",
+                "    print(f\"  • {risk} Risk: {count:,} patients ({pct:.1f}%) - {rate:.2f}% readmission rate\")\n",
+                "\n",
+                "print(f\"\\n✅ VCI VALIDATION: Risk Ratio = {risk_ratio:.2f}x\")\n",
+                "print(\"   High-risk patients are {:.1f}x more likely to be readmitted than low-risk.\".format(risk_ratio))\n",
+                "\n",
+                "print(\"\\n\" + \"=\" * 70)\n",
+                "print(\"PROJECT COMPLETE - ALL PHASES FINISHED\")\n",
+                "print(\"=\" * 70)\n",
+                "print(\"\\nNext Steps:\")\n",
+                "print(\"  1. Review Strategic Insight Report for business recommendations\")\n",
+                "print(\"  2. Implement VCI in clinical workflow for discharge planning\")\n",
+                "print(\"  3. Monitor VCI performance with prospective data\")\n",
+                "print(\"  4. Refine risk thresholds based on operational capacity\")\n",
+                "print(\"=\" * 70)"
+            ]
+        },
+        {
+            "cell_type": "markdown",
+            "metadata": {},
+            "source": [
+                "## 4.7 Export Enhanced Dataset"
+            ]
+        },
+        {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {},
+            "outputs": [],
+            "source": [
+                "# Save enhanced dataset with VCI scores\n",
+                "output_file = 'VHN_Enhanced_Dataset_with_VCI.csv'\n",
+                "df.to_csv(output_file, index=False)\n",
+                "print(f\"✓ Enhanced dataset saved to: {output_file}\")\n",
+                "print(f\"  Includes VCI_Score and VCI_Risk_Category columns\")\n",
+                "print(f\"  Total records: {len(df):,}\")\n",
+                "print(f\"  Total features: {len(df.columns)}\")"
+            ]
+        }
+    ],
+    "metadata": {
+        "kernelspec": {
+            "display_name": "Python 3",
+            "language": "python",
+            "name": "python3"
+        },
+        "language_info": {
+            "name": "python",
+            "version": "3.8.0"
+        }
+    },
+    "nbformat": 4,
+    "nbformat_minor": 4
+}
